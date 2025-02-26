@@ -3,3 +3,4 @@ node_modules
 virt
 uploads
 __pycache__
+.idea
