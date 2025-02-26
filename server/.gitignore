@@ -1,2 +1,5 @@
 node_modules
 .env
+virt
+uploads
+__pycache__
