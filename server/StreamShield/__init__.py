@@ -1,3 +1,3 @@
-from .main import process_video_and_audio
+from .media_processor import MediaProcessor
 
-_all_ = ["process_video_and_audio"]
+__all__ = ["MediaProcessor"]

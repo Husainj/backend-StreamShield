@@ -2,9 +2,9 @@ import os
 import sys
 from pydub import AudioSegment
 
-from video_processor import process_video, VideoBlurProcessor
-from audio_processor import load_bad_words, extract_audio, transcribe_audio, censor_audio
-from merge import merge_audio_video
+from .video_processor import process_video, VideoBlurProcessor
+from .audio_processor import load_bad_words, extract_audio, transcribe_audio, censor_audio
+from .merge import merge_audio_video
 
 def process_video_and_audio(input_video_path: str, output_video_path: str, model_path: str, badwords_path: str):
     # Initialize video blur processor
@@ -19,6 +19,8 @@ def process_video_and_audio(input_video_path: str, output_video_path: str, model
     wav_file = extract_audio(input_video_path)
     audio = AudioSegment.from_wav(wav_file)
     transcription_data = transcribe_audio(wav_file, r"C:\Projects\Privacy Lens\server\StreamShield\vosk-model-small-en-in-0.4")
+
+
     censored_audio, _ = censor_audio(audio, transcription_data, bad_words)
     # processed_audio_path = merge_audio_with_video(input_video_path, censored_audio)
 

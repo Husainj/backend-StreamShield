@@ -3,3 +3,7 @@ torch
 ultralytics
 pydub
 vosk
+fastapi
+uvicorn
+python-multipart
+aiofiles

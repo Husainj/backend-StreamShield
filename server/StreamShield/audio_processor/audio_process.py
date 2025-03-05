@@ -46,6 +46,8 @@ def transcribe_audio(audio_file, model_path):
     except Exception as e:
         print(f"Error during transcription: {e}")
         exit(1)
+
+
     return transcription_data
 
 def censor_audio(audio, transcription_data, bad_words):
