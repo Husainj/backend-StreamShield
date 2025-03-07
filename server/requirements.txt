@@ -7,3 +7,6 @@ fastapi
 uvicorn
 python-multipart
 aiofiles
+pyvirtualcam==0.10.2
+mss==9.0.1
+Pillow==10.0.0

@@ -69,7 +69,9 @@ class MediaProcessor:
         """Process audio file with the specified option."""
         if process_option in ['beep_audio', 'beep_video']:
             audio = AudioSegment.from_file(input_path)
-            transcription_data = transcribe_audio(input_path, self.vosk_model_path)
+            wav_path = "temp_audio.wav"
+            audio.export(wav_path, format="wav", parameters=["-ac", "1", "-ar", "16000"])
+            transcription_data = transcribe_audio(wav_path, self.vosk_model_path)
             censored_audio, _ = censor_audio(audio, transcription_data, self.bad_words)
             censored_audio.export(output_path, format="wav")
         else:

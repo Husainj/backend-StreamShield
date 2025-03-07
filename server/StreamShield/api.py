@@ -7,6 +7,7 @@ from typing import Literal
 import logging
 
 from .media_processor import MediaProcessor
+from .virtual_camera_service import virtual_camera_service
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -89,6 +90,22 @@ async def process_media(
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+@app.post("/virtual-camera/start")
+async def start_virtual_camera():
+    """Start the virtual camera with privacy protection"""
+    result = virtual_camera_service.start()
+    if result["status"] == "error":
+        raise HTTPException(status_code=400, detail=result["message"])
+    return result
+
+@app.post("/virtual-camera/stop")
+async def stop_virtual_camera():
+    """Stop the virtual camera"""
+    result = virtual_camera_service.stop()
+    if result["status"] == "error":
+        raise HTTPException(status_code=400, detail=result["message"])
+    return result
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):

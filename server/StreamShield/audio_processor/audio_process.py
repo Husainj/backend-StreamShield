@@ -43,6 +43,7 @@ def transcribe_audio(audio_file, model_path):
                     transcription_data.extend(result.get("result", []))
         final_result = json.loads(recognizer.FinalResult())
         transcription_data.extend(final_result.get("result", []))
+        print("Transcription data : " , transcription_data)
     except Exception as e:
         print(f"Error during transcription: {e}")
         exit(1)
