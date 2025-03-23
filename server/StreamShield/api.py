@@ -1,4 +1,5 @@
 import os
+import json
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, JSONResponse
 import shutil
@@ -39,14 +40,14 @@ def cleanup_files(*files):
 @app.post("/process-media")
 async def process_media(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),  # Kept as 'file' to match frontend
-    textFile: Optional[UploadFile] = File(default=None),  # Optional text file
+    file: UploadFile = File(...),
+    badWords: Optional[str] = Form(default=None),  # JSON string of bad words
     processOption: Literal['blur', 'beep_video', 'beep_audio'] = Form(...)
 ):
     try:
         logger.info(f"Received file: {file.filename} with option: {processOption}")
-        if textFile:
-            logger.info(f"Received text file: {textFile.filename}")
+        if badWords:
+            logger.info(f"Received custom bad words: {badWords}")
         
         # Generate unique filenames
         input_path = UPLOAD_DIR / f"input_{file.filename}"
@@ -62,17 +63,18 @@ async def process_media(
             logger.error(f"Error saving file: {e}")
             raise HTTPException(status_code=500, detail=f"Error saving file: {str(e)}")
         
-        # Save uploaded text file if provided
-        if textFile:
-            custom_badwords_path = UPLOAD_DIR / f"badwords_{textFile.filename}"
+        # Create a custom badwords file if badWords is provided
+        if badWords:
+            custom_badwords_path = UPLOAD_DIR / f"badwords_{file.filename}.txt"
             try:
-                with open(custom_badwords_path, "wb") as buffer:
-                    shutil.copyfileobj(textFile.file, buffer)
-                logger.info(f"Text file saved to {custom_badwords_path}")
+                bad_words_list = json.loads(badWords)  # Parse JSON string to list
+                with open(custom_badwords_path, "w") as f:
+                    f.write("\n".join(bad_words_list))  # Write words, one per line
+                logger.info(f"Custom badwords file created at {custom_badwords_path}")
             except Exception as e:
-                logger.error(f"Error saving text file: {e}")
+                logger.error(f"Error creating custom badwords file: {e}")
                 cleanup_files(str(input_path))
-                raise HTTPException(status_code=500, detail=f"Error saving text file: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Error creating badwords file: {str(e)}")
         
         try:
             # Determine which badwords file to use
