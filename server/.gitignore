@@ -4,3 +4,5 @@ virt
 uploads
 __pycache__
 .idea
+temp_audio.wav
+badwords.txt
